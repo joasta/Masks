@@ -28,8 +28,8 @@ void cos2(int px_x, int px_y, float sampling_x, float sampling_y, float &value_p
 {
 	float x = px_x * sampling_x;
 	float y = px_y * sampling_y;
-	x = cos(x / 8 * 2 * M_PI) * cos(x / 8 * 2 * M_PI);
-	y = cos(y / 8 * 2 * M_PI) * cos(y / 8 * 2 * M_PI);
+	x = cos(x / 8 * M_PI) * cos(x / 8 * M_PI);
+	y = cos(y / 8 * M_PI) * cos(y / 8 * M_PI);
 	value_px = x * y;
 }
 
