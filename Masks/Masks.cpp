@@ -18,7 +18,7 @@ void set_lookup_table(float sampling_x, float sampling_y, float w0 = 7.0, float 
 		for (int j = 0; j < lookup_size; j++)
 		{
 			y = (j - lookup_size / 2)*sampling_y;
-			lookup[i][j] = exp(-(x*x + y * y) / w0 / w0);
+			lookup[i][j] = exp(-2*(x*x + y * y) / w0 / w0);
 		}
 	}
 }
