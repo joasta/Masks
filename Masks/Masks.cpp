@@ -5,20 +5,23 @@ using namespace std;
 
 const int lookup_size = 512;
 float lookup[lookup_size][lookup_size] = {0};
+int SLMpixel = 8;
 
 /*Ustawianie lookup table dla funkcji gaussa*/
-void set_lookup_table(float sampling_x, float sampling_y, float w0 = 7.0, float lambda = 0.632)
+void set_lookup_table(float w0 = 7.0, float lambda = 0.632)
 {
 	//float z0 = M_PI * w0 * w0 / lambda;
 	float x = 0, y = 0;
+	float sample_x = (float) SLMpixel / lookup_size;
+	float sample_y = (float) SLMpixel / lookup_size;
 
 	for (int i = 0; i < lookup_size; i++)
 	{
-		x = (i - lookup_size / 2)*sampling_x;
+		x = (i - lookup_size / 2)*sample_x;
 		for (int j = 0; j < lookup_size; j++)
 		{
-			y = (j - lookup_size / 2)*sampling_y;
-			lookup[i][j] = exp(-2*(x*x + y * y) / w0 / w0);
+			y = (j - lookup_size / 2)*sample_y;
+			lookup[i][j] = exp(-(x*x + y * y) / w0 / w0);
 		}
 	}
 }
@@ -28,8 +31,8 @@ void cos2(int px_x, int px_y, float sampling_x, float sampling_y, float &value_p
 {
 	float x = px_x * sampling_x;
 	float y = px_y * sampling_y;
-	x = cos(x / 8 * M_PI) * cos(x / 8 * M_PI);
-	y = cos(y / 8 * M_PI) * cos(y / 8 * M_PI);
+	x = cos(x / SLMpixel * M_PI) * cos(x / SLMpixel * M_PI);
+	y = cos(y / SLMpixel * M_PI) * cos(y / SLMpixel * M_PI);
 	value_px = x * y;
 }
 
@@ -38,8 +41,8 @@ void gauss(int px_x, int px_y, float sampling_x, float sampling_y, float &value_
 {
 	float x = px_x * sampling_x;
 	float y = px_y * sampling_y;
-	int lookup_x = (int)(fmod(x, 8)/8 * 512);
-	int lookup_y = (int)(fmod(y, 8)/8 * 512);
+	int lookup_x = (int)(fmod(x, SLMpixel)/ SLMpixel * 512);
+	int lookup_y = (int)(fmod(y, SLMpixel)/ SLMpixel * 512);
 	value_px = lookup[lookup_x][lookup_y];
 }
 
@@ -47,13 +50,13 @@ int main()
 {
 	cout << "START\n";
 
-	float sampling_x = 1; //um
-	float sampling_y = 1; //um
+	float sampling_x = 0.258; //um
+	float sampling_y = 0.3; //um
 	float w0 = 7; //um
 	float lambda = 0.632; //um
 	const int mask_size = 128; // 32768;
 
-	set_lookup_table(sampling_x, sampling_y, w0, lambda);
+	set_lookup_table(w0, lambda);
 	cout << "Lookup table set!\n";
 
 	float gauss_mask[mask_size][mask_size] = { 0 };
